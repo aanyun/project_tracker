@@ -5,12 +5,15 @@
     <link href="//cdn.datatables.net/1.10.1/css/jquery.dataTables.css" rel="stylesheet"> 
     <link href="../assets/css/bootstrap.css" rel="stylesheet"> 
     <link href='../assets/css/fullcalendar.css' rel='stylesheet' />
+    <link href='../assets/css/home.css' rel='stylesheet' />
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src='../assets/js/jquery.qtip-1.0.0-rc3.min.js'></script>
     <script type="text/javascript" src="//cdn.datatables.net/1.10.1/js/jquery.dataTables.js"> </script>
     <script src='../assets/js/moment.min.js'></script>
     <script src='../assets/js/jquery.form.js'></script>
     <script src='../assets/js/fullcalendar.js'></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    
     <script src="<?php echo base_url() ?>assets/js/new_project.js"></script>
 
      <?php //var_dump($projects[0]->id);?>
@@ -26,40 +29,66 @@
             {
                 "targets": [0],
                 "visible": false
-            },
-             {
-              "targets": [1],
-              "width": "280px"
-                
-            },
-            {
-              "targets": [3]
-              // "width": "10px"
-                
-            },
-            {
-              "targets": [4],
-              "width": "100px"
-                
-            },
-                        {
-              "targets": [5],
-              "width": "100px"
-                
             }
-
             ]
           }
         );
+       
        $.getJSON('../events/history/'+lastProjectId, function(jsonData) {
           //console.log(jsonData);
+
           cal = $('#calendar').fullCalendar({
+            defaultView: 'month',
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,basicWeek,basicDay'
+              },
+            eventRender: function (event, element, view) {
+              
+              if (view.name == 'month') {
+                   var year = new Date(event.start).getFullYear(), month = new Date(event.start).getMonth() + 1, date = new Date(event.start).getDate();
+                   var result = year + '-' + (month < 10 ? '0' + month : month) + '-' + (date < 10 ? '0' + date : date);
+                   $(element).addClass(result);
+                   var ele = $('td[data-date="' + result + '"]'),count=$('.' + result).length;
+                   $(ele).find('.viewMore').remove();
+                   if ( count> 3) {
+                       $('.' + result + ':gt(2)').remove();                          
+                       $(ele).find('.fc-day-content').after('<a class="viewMore"> More</a>');
+
+                   } 
+               }
+            },
+            dayClick: function (date, allDay, jsEvent, view) {
+                  cal.fullCalendar('clientEvents', function(event) {
+                      event_date = event.start;
+                      //console.log(event_date.format('YYYY-MM-DD'));
+                      //console.log(date.format());
+                      if(event_date.format('YYYY-MM-DD') == date.format()) {
+                        cal.fullCalendar('changeView', 'basicDay');
+                        cal.fullCalendar('gotoDate',date.format());
+                        return true;
+                      }
+                      return false;
+                  });
+                   
+               },
+            eventAfterAllRender: function (view) {
+               if (view.name == 'month') {
+                   $('td.fc-day').each(function () {
+                       var EventCount = $('.' + $(this).attr('data-date')).length;
+                       if (EventCount == 0)
+                           $(this).find('.viewMore').remove();
+                   });
+               }
+           },
             defaultDate: d,
             events: jsonData,
             eventClick: function(event) {
 
             }
           });
+          
        });
 
       var d = new Date();
@@ -83,7 +112,7 @@
 
           cal.fullCalendar( 'removeEvents');
           cal.fullCalendar( 'addEventSource', '../events/history/'+aData[0] );
-
+          cal.fullCalendar('changeView', 'month');
         }
         if ($(this).hasClass('danger')) {
             $(this).removeClass('danger');

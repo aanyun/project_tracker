@@ -1,0 +1,10 @@
+
+#projectsTable td{
+	font-size: 0.9em;
+}
+#projectsTable th{
+	font-size: 0.9em;
+}
+#calendar a.viewMore {
+	cursor: pointer;
+}

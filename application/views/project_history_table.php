@@ -82,7 +82,9 @@
             $datetime1 = date_create($lastStatus->start_time);
             $datetime2 = date_create();
             $interval = date_diff($datetime1, $datetime2);
-            $elapsedtime = $interval->format('%h h %i m'); 
+            if( $interval->format('%a') == 0) 
+              $elapsedtime = $interval->format('%h h %i m'); 
+            else $elapsedtime = $interval->format('%a d %h h %i m');
             if($lastStatus->status_name == "Completed") {
               $elapsedtime = '-';
             }
@@ -135,7 +137,9 @@
               $datetime1 = date_create($subtask->start_time);
               $datetime2 = date_create($subtask->end_time);
               $interval = date_diff($datetime1, $datetime2);
-              $elapsedtime = $interval->format('%h h %i m');
+              if( $interval->format('%a') == 0) 
+                $elapsedtime = $interval->format('%h h %i m'); 
+              else $elapsedtime = $interval->format('%a d %h h %i m');
               if($subtask->status_name == "Completed") $elapsedtime = '-';
                 echo "<tr class='hide progress' data-project_tast_id ='".$project_task->id."' >
                       <td style='width:340px;'></td>

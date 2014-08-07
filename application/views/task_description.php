@@ -29,28 +29,28 @@
                 "visible": false
             },
             {
-                "targets": [4],
+                "targets": [5],
                 "visible": false
             },
 
             ]
           }
         );
-       $.getJSON('../../events/history/'+lastProjectId, function(jsonData) {
+       // $.getJSON('../../events/history/'+lastProjectId, function(jsonData) {
 
-          cal = $('#calendar').fullCalendar({
-            defaultDate: d,
-            events: jsonData,
-            eventClick: function(event) {
+       //    cal = $('#calendar').fullCalendar({
+       //      defaultDate: d,
+       //      events: jsonData,
+       //      eventClick: function(event) {
 
-            },
-            dayClick: function(date, jsEvent, view) {
-              $('#newProject #new_start').val(date.format());
-              $('#newProject').modal('show');
+       //      },
+       //      dayClick: function(date, jsEvent, view) {
+       //        $('#newProject #new_start').val(date.format());
+       //        $('#newProject').modal('show');
 
-            }
-          });
-       });
+       //      }
+       //    });
+       // });
       $('#departmentSelect').change(function(){
         id = $(this).val();
         if($(this).val()!=''){
@@ -83,7 +83,7 @@
         if(task_id!=''){
           $.post('../../events/addNewTask',{
             "task_id":task_id,
-            "project_id":lastProjectId
+            "project_id":'<?php echo $project->id?>'
           },function(data){
             if(data == 1) {
               alert('Success');
@@ -117,7 +117,7 @@
 
           $("#taskId").val(aData[0]);
           $("#taskName").html(aData[1]);
-          $("#description").val(aData[4]);
+          $("#description").val(aData[5]);
           task = aData[1];
           //$("#subTitleLbl").html("Subtitle - <span style='font-size:.9em'>"+aData[1]+"</span>");
           array = aData[1].split('- ');
@@ -144,10 +144,11 @@
             if(data == 1){
                 $(".bg-success").show(); 
                 $("#task"+$("#taskId").val()).html(' - '+$("#subtitle").val());
-                $('#taskName').html('<p class="text-danger">-Please Click the task you want to modify from the left table</p>');
+                //$('#taskName').html('<p class="text-danger">-Please Click the task you want to modify from the left table</p>');
                 $("input,textarea").val("");
                 setTimeout(function(){
                     $(".bg-success").hide();
+                    $('#TaskEdit').modal('hide');
                 }, 3000)
                 // $(".bg-success").
             }else{
@@ -168,19 +169,24 @@
 
     <!--End of Calendar-->
     <!--Table-->
-    <div class="col-sm-6">
+    <div class="col-sm-8 col-sm-offset-2">
       <h2 style="margin-top:-5px;"><?=$project->title?> <small><?=$project->name?></small></h2>
-      <h4><small>Task List Table</small></h4>
+        <div style="margin-bottom:50px;">
+          <a class="pull-left" href="../../home"><span class="glyphicon glyphicon-circle-arrow-left"></span> Back to Project List Page</a>
+          <a class="pull-right" href="../../project/<?=$projectId?>" >Go to Project Page <span class="glyphicon glyphicon-circle-arrow-right"></span></a>
+        </div>
+      <h4><small>Task List Table</small><a class="btn btn-primary pull-right" data-toggle="modal" data-target="#NewTaskCreate">Add New Task<a></h4>
       <hr>
-      
       <table class="table" id="projectsTable" style="width:100%"> 
         <thead>
             <tr>
                 <th>id</th>
                 <th>Title</th>
                 <th>Department</th>
+                <th>Edit</th>
                 <th>Remove</th>
                 <th>Description</th>
+
             </tr>
         </thead>
 
@@ -200,7 +206,7 @@
               }
            ?>
           <td><?php echo $task->department_name;?></td>
-         
+          <td><a data-toggle="modal" href="javascript:void(0)" data-target="#TaskEdit"><span class="glyphicon glyphicon-pencil"></span> Edit </a></td>
           <?php //echo '<td><a href="/project/'.$projectId.'"><span class="glyphicon glyphicon-pencil"></span></td>';  ?>
           <td><a class="task_remove" href="javascript:void(0)" data-href="../../events/remove_task/<?=$task->id?>/<?=$project->id?>" style="color:#d9534f"><span class="glyphicon glyphicon-remove-sign"></span></a></td>
           <td><?php echo $task->task_desc;?></td>
@@ -209,62 +215,6 @@
       </tbody>
 
       </table>
-    </div>
-    <div class="col-sm-4">
-        <h4 style="margin-top:38px;"><small><span class="glyphicon glyphicon-pencil"></span> Task Detail Edit</small></h4>
-        <hr>
-        <p class="bg-success" style="display:none">Update succesfully!</p>
-        <p class="bg-danger" style="display:none"></p>
-
-        <form role="form" id="saveForm">
-          <label>Task Name</label>
-          <div id="taskName"><p class="text-danger">-Please Click the task you want to modify from the left table</p></div>
-            <input type="hidden" id="taskId" value='' />
-          <div class="form-group">
-            <label for="exampleInputEmail1" id="subTitleLbl">Subtitle</label>
-            <input type="text" class="form-control" id="subtitle" placeholder="Enter the subtitle">
-          </div>
-          <div class="form-group">
-            <label for="exampleInputPassword1">Description</label>
-            <textarea id="description" placeholder="Enter the description" class="form-control" rows="2"></textarea>
-          </div>
-
-          <button type="submit" class="btn btn-default">Save</button>
-        </form>
-
-
-
-        <h4 style="margin-top:80px;"><small><span class="glyphicon glyphicon-plus"></span> Add new Task</small></h4>
-        <hr>
-        
-        <form class="form-horizontal" role="form">
-        <div class="form-group">
-        <label class="col-sm-3">Department: </label>
-        <select class="col-sm-5" id="departmentSelect" name='department'>
-          <option value>--Select Department--</option>
-          <option value="1">Instructional Design Department</option>
-          <option value="2">3D Department</option>
-          <option value="3">Flash Department</option>
-        </select>
-        </div>
-        <div id="new_task_list_div" class="form-group hide">
-        <label class="col-sm-3">Task: </label>
-        <select class="col-sm-5" id="taskSelect" name='department'>
-        </select>
-        </div>
-        </form>
-        <div id="new_task_submit_div" class="hide">
-          <button class="btn btn-info" id="new_task_button">Create</button>
-        </div>
-
-
-        <div style="margin-top:100px;">
-          <a class="pull-left" href="../../home"><span class="glyphicon glyphicon-circle-arrow-left"></span> Back to Project List Page</a>
-          <a class="pull-right" href="../../project/<?=$projectId?>" >Go to Project Page <span class="glyphicon glyphicon-circle-arrow-right"></span></a>
-        </div>
-
-
-
     </div>
   </body>
 

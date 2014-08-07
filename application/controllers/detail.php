@@ -68,11 +68,16 @@ class Detail extends CI_Controller {
 
       //progress bar data collect
       $counter = array(0,0,0);
+      $counter2 = array(0,0,0);
     	$totalTasks = count($project_tasks_data);
       foreach($project_tasks_data as $val){
         if($val->d_id == 1&&$val->end_time!=null) $counter[0]++;
         if($val->d_id == 2&&$val->end_time!=null) $counter[1]++;
         if($val->d_id == 3&&$val->end_time!=null) $counter[2]++;
+
+        if($val->d_id == 1&&$val->start_time!=null) $counter2[0]++;
+        if($val->d_id == 2&&$val->start_time!=null) $counter2[1]++;
+        if($val->d_id == 3&&$val->start_time!=null) $counter2[2]++;
       }
 
       $counter_total = array(0,0,0);
@@ -87,6 +92,7 @@ class Detail extends CI_Controller {
       if($counter_total[1]!=0) $data['threeDprogress'] = round(($counter[1]/$counter_total[1])*100,2); else $data['threeDprogress'] =0;
       if($counter_total[2]!=0) $data['flashprogress'] = round(($counter[2]/$counter_total[2])*100,2); else $data['flashprogress']=0;
       $data['counter'] = $counter;
+      $data['counter2'] = $counter2;
       $data['counter_total'] = $counter_total;
       $data['totalTasks'] = $totalTasks;
     	// $data['totalCurrentTasks'] = count($project_tasks);

@@ -6,7 +6,7 @@
         <h4 class="modal-title">Add New Task</h4>
       </div>
       <div class="modal-body">
-        <?php if($counter[2]==$counter_total[2]) {?>
+        <?php if($counter2[2]==$counter_total[2]) {?>
         <div>No more task for this department</div>
         <?php }else {?>
         <form enctype="multipart/form-data" action="../events/add" method="post">

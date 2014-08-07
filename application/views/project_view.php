@@ -87,8 +87,6 @@
           ?>
             <div class="panel panel-default current_task" data-id="<?php echo $key?>">
               <div class="panel-body">
-                <h2 class="panel-title">Instructional Design</h2>
-                <hr />
                 <h4>
                   <?php echo $event->task_name.' '.$event->task_sub_name;
                     if($event->isClient == 1)

@@ -94,8 +94,10 @@ class Events extends CI_Controller {
     }
 
 
-
-    if($this->activities->createNew($data)) echo "Success";
+    if($this->activities->createNew($data)) {
+      $this->send_email($this->input->post('project_task_select'));
+      echo "Success";
+    }
   }
 
 
@@ -147,17 +149,17 @@ class Events extends CI_Controller {
     foreach ($r as $row) {
       switch ($row->department_id) {
         case '1':
-            $color = "#5cb85c";
+            $color = "#B3E39F";
           break;
         case '2':
-            $color = "#5bc0de";
+            $color = "#B5E0F5";
           break;
         case '3':
-            $color = "#f0ad4e";
+            $color = "#FCE981";
           break;
 
       }
-      $data[]=["title"=>$row->task_name." - ".$row->status_name, "start"=>$row->start_time , "color"=>$color, "textColor"=>"black"];
+      $data[]=["title"=>$row->task_name." ".$row->task_sub_name." - ".$row->status_name, "start"=>$row->start_time , "color"=>$color, "textColor"=>"black"];
       $row->task_name;
       
     }
@@ -185,12 +187,12 @@ class Events extends CI_Controller {
     $config['wordwrap'] = TRUE;
 
     $this->email->initialize($config); 
-    $this->email->from('ali@ignitorlabs.com', 'Project Tracker System');
+    $this->email->from($project_info->ignitor_email, 'Project Tracker System');
     $data = $this->activities->getvwCurrentStatus($id_project_task);
     
 //send upadate email to ignitorlabs
     if($data->isClient){       
-      $this->email->to('anyunww@gmail.com');  // receiver from ignitorlabs
+      $this->email->to($project_info->ignitor_email);  // receiver from ignitorlabs
       $this->email->subject('Client '.$project_info->name.' Update Project Tracker');
       $this->email->message('<div>'.$data->project_name.'</div>
         <div>'.$project_info->contact_name.' from <b>'.$project_info->name.'</b> just update Task :<b>'.$data->task_name.' '.$data->task_sub_name.'</b> status to :</div>

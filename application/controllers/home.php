@@ -208,6 +208,8 @@ class Home extends CI_Controller {
       $this->load->view( 'header', $data );
       $this->load->view(  'task_description', $data);
       $this->load->view( 'newProject', $data );
+      $this->load->view( 'createNewTask', $data );
+      $this->load->view( 'taskEdit', $data );
       $this->load->view( 'remove_task_confirm', $data );
     }
     else {
